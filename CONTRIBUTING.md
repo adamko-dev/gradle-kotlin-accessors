@@ -5,10 +5,8 @@ How this project is built and tested. For what it is and how to use it, see
 
 ## Building
 
-```shell
-./gradlew check # all tests
-./gradlew build # build everything
-```
+- `./gradlew check` all tests
+- `./gradlew build` build everything
 
 ## Dogfooding
 
