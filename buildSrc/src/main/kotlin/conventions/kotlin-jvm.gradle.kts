@@ -4,7 +4,6 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
   id("org.gradle.kotlin.embedded-kotlin")
-  id("dev.adamko.dev-publish")
 }
 
 group = "dev.adamko.gradle.kotlinaccessors"
