@@ -72,9 +72,6 @@ abstract class MavenPublishingSettings @Inject constructor(
       .orElse(providers.environmentVariable("MAVEN_SONATYPE_SIGNING_PASSWORD"))
 
 
-  val githubPublishDir: Provider<File> =
-    providers.environmentVariable("GITHUB_PUBLISH_DIR").map { File(it) }
-
   private fun gkaProp(name: String): Provider<String> =
     providers.gradleProperty("dev.adamko.gradle.kotlinaccessors.$name")
 
