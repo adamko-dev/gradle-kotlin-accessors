@@ -1,0 +1,52 @@
+{
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+  extends: [
+    "config:recommended"
+  ],
+  enabled: true,
+  enabledManagers: [
+    "gradle",
+    "gradle-wrapper",
+    "github-actions",
+  ],
+  pinDigests: true,
+  // will auto-merge directly, without a PR, if tests pass - else, makes a PR
+  automergeType: "branch",
+  platformAutomerge: true,
+  ignoreTests: false,
+  packageRules: [
+    {
+      // automerge all but major releases
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "pin",
+        "digest",
+      ],
+      "automerge": true,
+    }
+  ],
+
+  timezone: "Etc/UTC",
+  // loosely limit to Europe work hours, so we don't get pinged in the middle of the night
+  schedule: [
+    "after 10am and before 6pm"
+  ],
+  automergeSchedule: [
+    "after 10am and before 6pm"
+  ],
+
+  minimumReleaseAge: "14 days",
+  "suppressNotifications": [
+    //    "artifactErrors",
+    //    "branchAutomergeFailure",
+    //    "configErrorIssue",
+    //    "deprecationWarningIssues",
+    //    "lockFileErrors",
+    //    "onboardingClose",
+    //    "prEditedNotification",
+    //    "prIgnoreNotification",
+  ],
+  prCreation: "status-success",
+  semanticCommits: "disabled",
+}
