@@ -61,15 +61,19 @@ abstract class MavenPublishingSettings @Inject constructor(
       .orElse(providers.environmentVariable("MAVEN_ADAMKO_DEV_PASSWORD"))
 
 
+  // Blank values are filtered out because GitHub Actions sets unavailable secrets to an empty string.
   val signingKeyId: Provider<String> =
     gkaProp("signing.keyId")
       .orElse(providers.environmentVariable("MAVEN_SONATYPE_SIGNING_KEY_ID"))
+      .filter { it.isNotBlank() }
   val signingKey: Provider<String> =
     gkaProp("signing.key")
       .orElse(providers.environmentVariable("MAVEN_SONATYPE_SIGNING_KEY"))
+      .filter { it.isNotBlank() }
   val signingPassword: Provider<String> =
     gkaProp("signing.password")
       .orElse(providers.environmentVariable("MAVEN_SONATYPE_SIGNING_PASSWORD"))
+      .filter { it.isNotBlank() }
 
 
   private fun gkaProp(name: String): Provider<String> =
