@@ -6,11 +6,9 @@ import kotlin.io.path.createDirectories
 import kotlin.io.path.deleteRecursively
 import kotlin.io.path.writeText
 
-
-//import buildsrc.AccessorsTestArguments.Companion.AccessorsTestArguments
-
 plugins {
   id("buildsrc.conventions.kotlin-jvm")
+  id("dev.adamko.dev-publish")
 }
 
 description = "Integration tests."
@@ -41,14 +39,6 @@ testing {
 
           val projectVersion: Provider<String> = providers.provider { project.version.toString() }
           inputs.property("projectVersion", projectVersion)
-
-//          jvmArgumentProviders.add(
-//            objects.AccessorsTestArguments {
-//              accessorsCoordinates = projectVersion.map { projectVersion ->
-//                "dev.adamko.gradle.kotlinaccessors:accessors:${projectVersion}"
-//              }
-//            }
-//          )
 
           systemProperty("junit.jupiter.tempdir.cleanup.mode.default", "ON_SUCCESS")
           systemProperty("junit.jupiter.execution.timeout.testtemplate.invocation.default", "10m")

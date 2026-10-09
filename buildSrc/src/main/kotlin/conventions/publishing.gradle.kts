@@ -1,11 +1,14 @@
 package buildsrc.conventions
 
 import buildsrc.settings.MavenPublishingSettings
+import gradle.kotlin.dsl.accessors._6e9048c3fd848101cc4fe540438fc9b3.publishingOutsideDevRepo
+import gradle.kotlin.dsl.accessors._6e9048c3fd848101cc4fe540438fc9b3.signing
 
 plugins {
   `maven-publish`
   signing
   id("com.gradleup.nmcp")
+  id("dev.adamko.dev-publish")
 }
 
 val mavenPublishing =
@@ -48,6 +51,8 @@ publishing {
 }
 
 signing {
+  setRequired(publishingOutsideDevRepo)
+
   val signingKeyId = mavenPublishing.signingKeyId.orNull
   val signingKey = mavenPublishing.signingKey.orNull
   val signingPassword = mavenPublishing.signingPassword.orNull
