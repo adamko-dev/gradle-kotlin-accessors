@@ -66,6 +66,7 @@ val prepSources by tasks.registering {
 
   doLast {
     val rootKtExtension = ".root.kt"
+    val kotlinDslPackage = "package org.gradle.kotlin.dsl"
     fs.sync {
       from(projectSources)
       into(outputDir)
@@ -79,12 +80,10 @@ val prepSources by tasks.registering {
       .filter { it.isRegularFile() }
       .filter { it.name.endsWith(rootKtExtension) }
       .forEach { file ->
-        file.writeText(
-          file.readText().replace(
-            "\npackage org.gradle.kotlin.dsl\n",
-            ""
-          )
-        )
+        val source = file.readText()
+        val rootSource = source.replace(Regex("""\R${Regex.escape(kotlinDslPackage)}\R"""), "")
+        check(rootSource != source) { "No `package org.gradle.kotlin.dsl` declaration found in $file" }
+        file.writeText(rootSource)
       }
   }
 }
