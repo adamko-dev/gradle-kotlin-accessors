@@ -37,9 +37,6 @@ testing {
         testTask.configure {
           dependsOn(tasks.updateDevRepo)
 
-          val projectVersion: Provider<String> = providers.provider { project.version.toString() }
-          inputs.property("projectVersion", projectVersion)
-
           systemProperty("junit.jupiter.tempdir.cleanup.mode.default", "ON_SUCCESS")
           systemProperty("junit.jupiter.execution.timeout.testtemplate.invocation.default", "10m")
         }
