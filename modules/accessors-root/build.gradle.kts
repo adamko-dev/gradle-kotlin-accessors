@@ -9,7 +9,6 @@ import org.gradle.api.attributes.VerificationType.MAIN_SOURCES
 import org.gradle.api.attributes.VerificationType.VERIFICATION_TYPE_ATTRIBUTE
 import org.gradle.kotlin.dsl.support.serviceOf
 
-
 plugins {
   id("buildsrc.conventions.kotlin-library")
 }
@@ -32,11 +31,14 @@ dependencies {
 }
 
 val projectSources by configurations.dependencyScope {
+  description = "The sources of a project."
   defaultDependencies {
     add(project.dependencies.project(":modules:accessors-dsl"))
   }
 }
+
 val projectSourcesResolver by configurations.resolvable {
+  description = "Resolves ${projectSources.name}."
   extendsFrom(projectSources)
   isTransitive = false
   attributes {
@@ -45,7 +47,12 @@ val projectSourcesResolver by configurations.resolvable {
     attribute(VERIFICATION_TYPE_ATTRIBUTE, objects.named(MAIN_SOURCES))
   }
 }
+
 val prepSources by tasks.registering {
+  group = project.name
+  description =
+    "Copies sources from ${projects.modules.accessorsDsl.name}, removing the `package org.gradle.kotlin.dsl` declaration. " +
+        "Sources are copied so they are kept in sync."
   val fs = serviceOf<FileSystemOperations>()
 
   val outputDir = layout.buildDirectory.dir("generated-sources/main/kotlin")
@@ -58,15 +65,19 @@ val prepSources by tasks.registering {
     .normalizeLineEndings()
 
   doLast {
+    val rootKtExtension = ".root.kt"
     fs.sync {
       from(projectSources)
       into(outputDir)
-      rename { it.replace(".dsl.kt", ".root.kt") }
+      rename { it.replace(".dsl.kt", rootKtExtension) }
+
+      // Exclude the new scoped configurations.
+      // Gradle doesn't have them, so they don't need to be in the root package to get prioritised.
       exclude("**/ConfigurationContainerExtensions.*.kt")
     }
     outputDir.get().asFile.toPath().walk()
       .filter { it.isRegularFile() }
-      .filter { it.name.endsWith(".root.kt") }
+      .filter { it.name.endsWith(rootKtExtension) }
       .forEach { file ->
         file.writeText(
           file.readText().replace(
