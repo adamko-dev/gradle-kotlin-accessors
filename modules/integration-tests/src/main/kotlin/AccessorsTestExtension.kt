@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import java.nio.file.FileSystemException
 import java.nio.file.Path
 import java.util.stream.Stream
 import kotlin.io.path.createTempDirectory
@@ -95,14 +96,35 @@ class AccessorsTestExtension : TestTemplateInvocationContextProvider {
       "${context.displayName.replace(Regex("[^A-Za-z0-9]+"), "-").take(60)}-$gradle-"
     )
 
-    @OptIn(kotlin.io.path.ExperimentalPathApi::class)
     override fun close() {
       val mode = context
         .getConfigurationParameter(TempDir.DEFAULT_CLEANUP_MODE_PROPERTY_NAME, CleanupMode::valueOf)
         .orElse(CleanupMode.ALWAYS)
-      val keep = mode == CleanupMode.NEVER ||
-          (mode == CleanupMode.ON_SUCCESS && context.executionException.isPresent)
-      if (!keep) path.deleteRecursively()
+        ?: return
+
+      fun cleanup() {
+        try {
+          path.deleteRecursively()
+        } catch (ex: FileSystemException) {
+          if (System.getProperty("os.name").lowercase().contains("windows")) {
+            // Workaround for Gradle bug https://github.com/gradle/gradle/issues/39441
+            System.err.println("Could not fully delete $path: $ex")
+          } else {
+            throw ex
+          }
+        }
+      }
+
+      when (mode) {
+        CleanupMode.DEFAULT,
+        CleanupMode.NEVER      -> return
+
+        CleanupMode.ALWAYS     -> cleanup()
+        CleanupMode.ON_SUCCESS -> {
+          if (context.executionException.isPresent) return
+          cleanup()
+        }
+      }
     }
   }
 
