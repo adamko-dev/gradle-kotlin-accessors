@@ -1,3 +1,5 @@
+[![Maven Central](https://img.shields.io/maven-central/v/dev.adamko.gradle.kotlinaccessors/settings-plugin?style=for-the-badge)](https://central.sonatype.com/artifact/dev.adamko.gradle.kotlinaccessors/settings-plugin)
+
 # Gradle Kotlin Delegate Accessors
 
 This library adds Kotlin `by` delegated accessors for easier, succinct, and safer access to Gradle
